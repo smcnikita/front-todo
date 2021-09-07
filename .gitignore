@@ -1,0 +1,6 @@
+.idea
+.vscode
+node_modules
+public
+src/fonts
+src/img
