@@ -34,10 +34,7 @@ const { src, dest } = require("gulp"),
   autoprefixer = require("gulp-autoprefixer"),
   gcmq = require("gulp-group-css-media-queries"),
   cleanCSS = require("gulp-clean-css"),
-  rename = require("gulp-rename"),
-  uglify = require("gulp-uglify-es").default,
-  ttf2woff = require("gulp-ttf2woff"),
-  ttf2woff2 = require("gulp-ttf2woff2");
+  rename = require("gulp-rename");
 
 function browserSyncReloadPage() {
   browserSync.init({
@@ -71,35 +68,9 @@ function buildStyles() {
   );
 }
 
-function js() {
-  return (
-    src(path.src.js)
-      // .pipe(sourcemaps.init())
-      .pipe(dest(path.build.js))
-      .pipe(uglify())
-      .pipe(rename({ extname: ".min.js" }))
-      // .pipe(sourcemaps.write("./maps"))
-      .pipe(dest(path.build.js))
-      .pipe(browserSync.stream())
-  );
-}
-
-function images() {
-  return src(path.src.img)
-    .pipe(dest(path.build.img))
-    .pipe(browserSync.stream());
-}
-
-function fonts() {
-  src(path.src.fonts).pipe(ttf2woff()).pipe(dest(path.build.fonts));
-  return src(path.src.fonts).pipe(ttf2woff2()).pipe(dest(path.build.fonts));
-}
-
 function watchFiles() {
   gulp.watch([path.watch.html], html);
   gulp.watch([path.watch.css], buildStyles);
-  gulp.watch([path.watch.js], js);
-  gulp.watch([path.watch.img], images);
 }
 
 function deletePublicFolder() {
@@ -108,13 +79,10 @@ function deletePublicFolder() {
 
 const build = gulp.series(
   deletePublicFolder,
-  gulp.parallel(js, buildStyles, html, images, fonts)
+  gulp.parallel(buildStyles, html)
 );
 const watch = gulp.parallel(build, watchFiles, browserSyncReloadPage);
 
-exports.fonts = fonts;
-exports.images = images;
-exports.js = js;
 exports.buildStyles = buildStyles;
 exports.html = html;
 exports.build = build;
