@@ -68,9 +68,20 @@ function buildStyles() {
   );
 }
 
+function js() {
+  return (
+    src(path.src.js)
+      .pipe(dest(path.build.js))
+      .pipe(rename({ extname: ".min.js" }))
+      .pipe(dest(path.build.js))
+      .pipe(browserSync.stream())
+  );
+}
+
 function watchFiles() {
   gulp.watch([path.watch.html], html);
   gulp.watch([path.watch.css], buildStyles);
+  gulp.watch([path.watch.js], js);
 }
 
 function deletePublicFolder() {
@@ -79,10 +90,11 @@ function deletePublicFolder() {
 
 const build = gulp.series(
   deletePublicFolder,
-  gulp.parallel(buildStyles, html)
+  gulp.parallel(js, buildStyles, html)
 );
 const watch = gulp.parallel(build, watchFiles, browserSyncReloadPage);
 
+exports.js = js;
 exports.buildStyles = buildStyles;
 exports.html = html;
 exports.build = build;
